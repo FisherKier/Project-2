@@ -1,5 +1,9 @@
 package datastructures.concrete.dictionaries;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import datastructures.concrete.KVPair;
 //import datastructures.concrete.dictionaries.ArrayDictionary.Pair;
 import datastructures.interfaces.IDictionary;
 import misc.exceptions.NoSuchKeyException;
@@ -45,7 +49,6 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
         // type erasure is, or how arrays and generics interact. Do not
         // modify this method in any way.
         return (Pair<K, V>[]) (new Pair[arraySize]);
-
     }
     
     @Override
@@ -57,7 +60,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
         }
         throw new NoSuchKeyException();
     }
-
+    
     @Override
     public void put(K key, V value) {
         if (totalSize == 0) {
@@ -71,16 +74,32 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
             boolean isCopy = false;
             int index = -1;
             for (int i = 0; i < totalSize; i++) {
-                if (pairs[i] != null && (pairs[i].key == key || pairs[i].key.equals(key))) {
+                
+                if (pairs[i] == null) {
+                    isOpen = true;
+                    index = i;
+                    break;
+                }
+                
+                else if (key == null) {
+                    if (pairs[i] != null && pairs[i].key == null) {
+                        pairs[i].value = value;
+                        isCopy = true;
+                        break;
+                    }
+                }
+                
+                else if (pairs[i] != null && 
+                        pairs[i].key != null && 
+                        key != null &&
+                        (pairs[i].key.equals(key) || 
+                         pairs[i].key == key)) {
+                    
                     pairs[i].value = value;
                     isCopy = true;
                     break;
                 }
                 
-                else if (pairs[i] == null) {
-                    isOpen = true;
-                    index = i;
-                }
             }
             
             if (isOpen && !isCopy) {
@@ -141,10 +160,58 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
             this.key = key;
             this.value = value;
         }
+        
+        public K getKey() {
+            return key;
+        }
+        
+        public V getValue() {
+            return value;
+        }
 
         @Override
         public String toString() {
             return this.key + "=" + this.value;
         }
+    }
+    
+    private static class ArrayDictionaryIterator<K, V> implements Iterator<KVPair<K, V>> {
+        private Pair<K, V>[] pairs;
+        int current;
+        
+        public ArrayDictionaryIterator(Pair<K, V>[] pairs) {
+            this.pairs = pairs;
+            current = -1;
+        }
+        
+        public boolean hasNext() {
+            if(pairs != null && current < pairs.length) {
+                for(int i = current + 1; i < pairs.length; i ++) {
+                    if(pairs[i] != null) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        public KVPair<K, V> next() {
+            if(!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            current ++;
+            for(int i = current; i < pairs.length; i++) {
+                if(pairs[i] != null) {
+                    return new KVPair<K, V>(pairs[i].key, pairs[i].value);
+                }
+            }
+            return null;
+        }
+    }
+    
+    @Override
+    public Iterator<KVPair<K, V>> iterator() {
+        return new ArrayDictionaryIterator<>(pairs);
     }
 }
