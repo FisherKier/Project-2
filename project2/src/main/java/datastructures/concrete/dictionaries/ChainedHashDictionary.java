@@ -2,6 +2,7 @@ package datastructures.concrete.dictionaries;
 
 import datastructures.concrete.KVPair;
 import datastructures.interfaces.IDictionary;
+import misc.exceptions.NoSuchKeyException;
 import misc.exceptions.NotYetImplementedException;
 
 import java.util.Iterator;
@@ -13,11 +14,28 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
     // You may not change or rename this field: we will be inspecting
     // it using our private tests.
     private IDictionary<K, V>[] chains;
+    private int chainSize;
+    private int elementSize;
+    private int totalSize;
+    private double loadFactor;
 
     // You're encouraged to add extra fields (and helper methods) though!
 
+    //make basic HashDictionary with 50 'chains'
     public ChainedHashDictionary() {
-        throw new NotYetImplementedException();
+        chains = makeArrayOfChains(50);
+        totalSize = 50;
+        chainSize = 0;
+        elementSize = 0;
+        loadFactor = .99;
+    }
+    
+    public ChainedHashDictionary(int size) {
+        chains = makeArrayOfChains(size);
+        totalSize = size;
+        chainSize = 0;
+        elementSize = 0;
+        loadFactor = .99;
     }
 
     /**
@@ -36,27 +54,108 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 
     @Override
     public V get(K key) {
-        throw new NotYetImplementedException();
+        int hashVal = getHashVal(key);
+        
+        if(chains[hashVal] == null) {
+            throw new NoSuchKeyException();
+        } else {
+            return chains[hashVal].get(key);
+        }
+    }
+    
+    private void resize() {
+        IDictionary<K, V>[] tempList = makeArrayOfChains(totalSize * 2);
+        
+        for(int i = 0; i < totalSize; i++) {
+            if(chains[i] != null) {
+
+                for(KVPair<K,V> pair : chains[i]) {
+                    int hashVal = getHashVal(pair.getKey());
+                    
+                    if(tempList[hashVal] == null) {
+                        tempList[hashVal] = new ArrayDictionary<K,V>();
+                        tempList[hashVal].put(pair.getKey(), pair.getValue());
+                        chainSize++;
+                    } else {
+                        tempList[hashVal].put(pair.getKey(), pair.getValue());
+                    }
+                    
+                    
+                }
+            }
+        }
+        chains = tempList;
     }
 
+    //TODO implement resizing
     @Override
     public void put(K key, V value) {
-        throw new NotYetImplementedException();
+        //check if there are too many chains in the array,
+        //and if so resize the array
+        if(((double)chainSize + 1) / ((double)totalSize + 1) > loadFactor) {
+            //resize();
+        }
+        
+        int hashVal = getHashVal(key);
+        
+        //check if there is an arrayDictionary at the hash value,
+        //if not create one and put the key + value in it,
+        //then increase elementSize
+        
+        if(chains[hashVal] == null) {
+            chains[hashVal] = new ArrayDictionary<K, V>();
+            chains[hashVal].put(key, value);
+            elementSize++;
+            chainSize++;
+        }
+        //put the key and value into the existing arrayDictionary
+        
+        else {
+            //if the key isn't in the dictionary already increase element size
+            
+            if(!chains[hashVal].containsKey(key)) {
+                elementSize++;
+            }
+            chains[hashVal].put(key, value);
+        }
     }
 
     @Override
     public V remove(K key) {
-        throw new NotYetImplementedException();
+        int hashVal = getHashVal(key);
+        
+        if(chains[hashVal] == null) {
+            throw new NoSuchKeyException();
+        }
+        elementSize--;
+        return chains[hashVal].remove(key);
     }
 
     @Override
     public boolean containsKey(K key) {
-        throw new NotYetImplementedException();
+        int hashVal = getHashVal(key);
+        
+        if(chains[hashVal] == null) {
+            return false;
+        } else {
+            return chains[hashVal].containsKey(key);
+        }
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        return elementSize;
+    }
+    
+    //returns the index in the chains array for the given key
+    public int getHashVal(K key) {
+        if(key == null) {
+            return 0;
+        } else if(key.hashCode() < 0) {
+            return key.hashCode() % totalSize * -1;
+        } else {
+            return key.hashCode() % totalSize;
+        }
     }
 
     @Override

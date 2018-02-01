@@ -62,6 +62,8 @@ public abstract class TestDictionary extends BaseTest {
         }
     }
 
+   //TODO  /*
+    
     @Test(timeout=SECOND)
     public void testPutAndGetBasic() {
         IDictionary<String, String> dict = this.makeBasicDictionary();
@@ -228,8 +230,10 @@ public abstract class TestDictionary extends BaseTest {
             // Do nothing: this is ok
         }
     }
-
-
+    
+    //TODO */
+    
+    //TODO set to 5
     @Test(timeout=5 * SECOND)
     public void testAddGetMany() {
         int cap = 15000;
@@ -246,6 +250,8 @@ public abstract class TestDictionary extends BaseTest {
             }
         }
     }
+    
+    //TODO     /*
 
     @Test(timeout=SECOND)
     public void testContainsKeyBasic() {
@@ -506,4 +512,6 @@ public abstract class TestDictionary extends BaseTest {
             assertFalse(iter.hasNext());
         }
     }
+    
+    //TODO */
 }
