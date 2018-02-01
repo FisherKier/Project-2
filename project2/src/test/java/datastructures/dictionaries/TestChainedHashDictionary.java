@@ -8,6 +8,7 @@ import datastructures.interfaces.IDictionary;
 import org.junit.Test;
 
 public class TestChainedHashDictionary extends TestDictionary {
+    
     protected <K, V> IDictionary<K, V> newDictionary() {
         return new ChainedHashDictionary<>();
     }
@@ -65,6 +66,7 @@ public class TestChainedHashDictionary extends TestDictionary {
         assertFalse(dict.containsKey(key1));
     }
 
+    //TODO change to 10
     @Test(timeout=10*SECOND)
     public void stressTest() {
         int limit = 1000000;

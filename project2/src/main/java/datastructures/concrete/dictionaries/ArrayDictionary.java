@@ -106,7 +106,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
                 pairs[index] = new Pair<K, V>(key, value);
                 actualSize++;
             }
-            
+
             else if (!isOpen && !isCopy) {
                 Pair<K, V>[] tempList;
                 tempList = makeArrayOfPairs(totalSize * 2);
@@ -115,7 +115,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
                         tempList[i] = new Pair<K, V>(pairs[i].key, pairs[i].value);
                 }
                 tempList[totalSize] = new Pair<K, V>(key, value);
-                totalSize = totalSize*2;
+                totalSize = totalSize * 2;
                 actualSize++;
                 pairs = tempList;
             }
