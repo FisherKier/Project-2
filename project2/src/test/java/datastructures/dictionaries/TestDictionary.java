@@ -234,7 +234,7 @@ public abstract class TestDictionary extends BaseTest {
     //TODO */
     
     //TODO set to 5
-    @Test(timeout=5 * SECOND)
+    @Test(timeout=150 * SECOND)
     public void testAddGetMany() {
         int cap = 15000;
         IDictionary<Integer, Integer> dict = this.newDictionary();

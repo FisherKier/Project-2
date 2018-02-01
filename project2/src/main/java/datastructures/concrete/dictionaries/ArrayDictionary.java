@@ -20,7 +20,8 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     // You're encouraged to add extra fields (and helper methods) though!
 
     public ArrayDictionary() {
-        totalSize = 0;
+        pairs = makeArrayOfPairs(10);
+        totalSize = 10;
         actualSize = 0;
     }
     
@@ -63,13 +64,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     
     @Override
     public void put(K key, V value) {
-        if (totalSize == 0) {
-            pairs = makeArrayOfPairs(1);
-            pairs[0] = new Pair<K, V>(key, value);
-            totalSize++;
-            actualSize++;
-        } 
-        else {
+        
             boolean isOpen = false;
             boolean isCopy = false;
             int index = -1;
@@ -119,7 +114,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
                 actualSize++;
                 pairs = tempList;
             }
-        }
+        
     }
 
     @Override

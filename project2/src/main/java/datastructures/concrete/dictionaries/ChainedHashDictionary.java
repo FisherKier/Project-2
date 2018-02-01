@@ -18,7 +18,7 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
     private int elementSize;
     private int totalSize;
     private double loadFactor;
-
+    
     // You're encouraged to add extra fields (and helper methods) though!
 
     //make basic HashDictionary with 50 'chains'
@@ -27,7 +27,7 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
         totalSize = 50;
         chainSize = 0;
         elementSize = 0;
-        loadFactor = .99;
+        loadFactor = .7;
     }
     
     public ChainedHashDictionary(int size) {
@@ -35,7 +35,7 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
         totalSize = size;
         chainSize = 0;
         elementSize = 0;
-        loadFactor = .99;
+        loadFactor = .7;
     }
 
     /**
@@ -85,15 +85,15 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
             }
         }
         chains = tempList;
+        totalSize = totalSize * 2;
     }
 
-    //TODO implement resizing
     @Override
-    public void put(K key, V value) {
+    public void put(K key, V value) {       
         //check if there are too many chains in the array,
         //and if so resize the array
         if(((double)chainSize + 1) / ((double)totalSize + 1) > loadFactor) {
-            //resize();
+            resize();
         }
         
         int hashVal = getHashVal(key);
