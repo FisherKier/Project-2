@@ -66,7 +66,7 @@ public class TestChainedHashDictionary extends TestDictionary {
         assertFalse(dict.containsKey(key1));
     }
 
-    //TODO set to 1000000
+    //TODO change to 10
     @Test(timeout=10*SECOND)
     public void stressTest() {
         int limit = 1000000;
@@ -90,7 +90,4 @@ public class TestChainedHashDictionary extends TestDictionary {
             dict.remove(i);
         }
     }
-    
-   //TODO @Test(timeout=10*second)
-    
 }
