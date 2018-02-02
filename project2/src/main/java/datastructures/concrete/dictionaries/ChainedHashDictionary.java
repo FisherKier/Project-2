@@ -6,6 +6,7 @@ import misc.exceptions.NoSuchKeyException;
 import misc.exceptions.NotYetImplementedException;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * See the spec and IDictionary for more details on what each method should do
@@ -212,6 +213,7 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
      */
     private static class ChainedIterator<K, V> implements Iterator<KVPair<K, V>> {
         private IDictionary<K, V>[] chains;
+        private int step = 0;
 
         public ChainedIterator(IDictionary<K, V>[] chains) {
             this.chains = chains;
@@ -219,12 +221,41 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
 
         @Override
         public boolean hasNext() {
-            throw new NotYetImplementedException();
-        }
+            int count = 0;
+            for (IDictionary<K, V> bucket : this.chains) {
+                if(bucket != null) {
+                Iterator<KVPair<K, V>> bucketIterator = bucket.iterator();
+                while(bucketIterator.hasNext()) {
+                    count++;
+                    bucketIterator.next();
+                    if (count > step) {
+                        return true;
+                    }
+                }
+            }
+            }
+            return false;
+         }
+            
+              
 
         @Override
         public KVPair<K, V> next() {
-            throw new NotYetImplementedException();
+            int count = 0;
+            for (IDictionary<K, V> bucket : this.chains) {
+                if(bucket != null) {
+                Iterator<KVPair<K, V>> bucketIterator = bucket.iterator();
+                while(bucketIterator.hasNext()) {
+                    count++;
+                    KVPair<K, V> temp = bucketIterator.next();
+                    if (count > step) {
+                        step++;
+                        return temp;
+                    }
+                }
+            }
+            }
+            throw new NoSuchElementException();    
         }
     }
 }
