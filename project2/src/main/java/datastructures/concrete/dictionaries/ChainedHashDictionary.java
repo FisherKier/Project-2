@@ -66,11 +66,11 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
     
     private void resize() {
         IDictionary<K, V>[] tempList = makeArrayOfChains(totalSize * 2);
-        
-        for(int i = 0; i < totalSize; i++) {
-            if(chains[i] != null) {
+        totalSize = totalSize * 2;
+        for (IDictionary<K, V> bucket : chains) {
+            if(bucket != null) {
 
-                for(KVPair<K,V> pair : chains[i]) {
+                for(KVPair<K,V> pair : bucket) {
                     int hashVal = getHashVal(pair.getKey());
                     
                     if(tempList[hashVal] == null) {
@@ -86,16 +86,13 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
             }
         }
         chains = tempList;
-        totalSize = totalSize * 2;
     }
 
     @Override
     public void put(K key, V value) {       
         //check if there are too many chains in the array,
         //and if so resize the array
-        if(((double)chainSize + 1) / ((double)totalSize + 1) > loadFactor) {
-            resize();
-        }
+    
         
         int hashVal = getHashVal(key);
         
@@ -118,6 +115,10 @@ public class ChainedHashDictionary<K, V> implements IDictionary<K, V> {
                 elementSize++;
             }
             chains[hashVal].put(key, value);
+        }
+        
+        if(((double)(chainSize + 1)) / ((double)(totalSize + 1)) > loadFactor) {
+            resize();
         }
     }
 

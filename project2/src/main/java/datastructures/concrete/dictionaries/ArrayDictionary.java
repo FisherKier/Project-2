@@ -134,7 +134,17 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
     @Override
     public boolean containsKey(K key) {
         for (int i = 0; i < totalSize; i++) {
-            if (pairs[i] != null && (pairs[i].key == key || pairs[i].key.equals(key))) {
+            if(key == null) {
+                if (pairs[i] != null && pairs[i].key == null) {
+                    return true;
+                }
+            }
+            
+            else if (pairs[i] != null && 
+                    pairs[i].key != null && 
+                    key != null &&
+                    (pairs[i].key.equals(key) || 
+                     pairs[i].key == key)) {
                 return true;
             }
         }
@@ -201,7 +211,7 @@ public class ArrayDictionary<K, V> implements IDictionary<K, V> {
                     return new KVPair<K, V>(pairs[i].key, pairs[i].value);
                 }
             }
-            return null;
+            throw new NoSuchElementException();
         }
     }
     
